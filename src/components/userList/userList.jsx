@@ -1,21 +1,21 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {Table, Drawer, Button, Form, Input, Select, Upload } from 'antd';
 import './userList.css';
 
 const {Option} = Select;
 
-const UserList = props => {
+const UserList = () => {
     const [visible, setVisible] = useState();
     const [add, setAdd] = useState();
     const [dataSource, setDataSource] = useState(
       [
         {
-          key: '1',
+          key: 1,
           username: '홍길동',
           dept: 'team01',
         },
         {
-          key: '2',
+          key: 2,
           username: '홍길동',
           dept: 'team02',
         },
@@ -34,18 +34,18 @@ const UserList = props => {
     const onRemove = (key) => {
       setDataSource(dataSource.filter((item) => item.key !== key));
     };
-
-    const count = useRef();
-    const onFinish = () => {
-      console.log('??');
+    
+    const onFinish = (value) => {
+      console.log(value);
       const newData = {
-        key: count,
-        username: {},
-        dept: {},
+        key: dataSource.length + 1,
+        username: value.username,
+        dept: value.dept,
       };
       setDataSource(
        [...dataSource, newData]
       );
+      console.log(newData);
     };
 
     const fileList = [
@@ -57,8 +57,6 @@ const UserList = props => {
         thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
       },
     ]
-
-   
       
     const columns = [
       {
@@ -87,7 +85,8 @@ const UserList = props => {
         render: () =>
           <button onClick={() => showDrawer('수정')}>수정</button>
       },
-    ];
+    ]; 
+    console.log(dataSource);
       
     return (
       <>
@@ -109,19 +108,19 @@ const UserList = props => {
           footer={
             <div style={{textAlign: 'right'}}> 
               <Button onClick={onClose} style={{marginRight: 8}}>
-                취소
+                닫기
               </Button>
             </div>
           }
         > 
           <Form onFinish={onFinish}>
-            <Form.Item name={['user', 'name']} label="이름">
+            <Form.Item name="username" label="이름">
               <Input placeholder="이름"/>
             </Form.Item>
-            <Form.Item name={['user', 'number']} label="번호">
+            <Form.Item name="number" label="번호">
               <Input placeholder="번호"/>
             </Form.Item>
-            <Form.Item name={['user', 'dept']} label="부서">
+            <Form.Item name="dept" label="부서">
               <Select placeholder="부서 선택">
                 <Option value="team01">team01</Option>
                 <Option value="team02">team02</Option>
