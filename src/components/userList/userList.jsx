@@ -7,26 +7,40 @@ const {Option} = Select;
 const UserList = () => {
     const [visible, setVisible] = useState();
     const [add, setAdd] = useState();
+    const [selectIndex, setSelectIndex] = useState();
     const [dataSource, setDataSource] = useState(
       [
         {
           key: 1,
           username: '홍길동',
+          number: 1,
           dept: 'team01',
         },
         {
           key: 2,
           username: '홍길동',
+          number: 2,
           dept: 'team02',
         },
       ]
     );
 
-    const showDrawer = (add) => {
+    
+    const [form] = Form.useForm();
+    const showDrawer = (add, text) => {
       setVisible(true);
+
       console.log(add === '추가' ? '추가' : '수정') 
+      if (add === '수정') {
+        setSelectIndex(text.key)  
+        form.setFieldsValue(text)
+      } else {
+        form.resetFields()
+      }
+
       setAdd(add);
     };
+
     const onClose = () => {
       setVisible(false);
     };
@@ -34,19 +48,29 @@ const UserList = () => {
     const onRemove = (key) => {
       setDataSource(dataSource.filter((item) => item.key !== key));
     };
-    
+  
     const onFinish = (value) => {
-      console.log(value);
-      const newData = {
-        key: dataSource.length + 1,
-        username: value.username,
-        dept: value.dept,
-      };
-      setDataSource(
-       [...dataSource, newData]
-      );
-      console.log(newData);
+      if (add === '추가') {
+        const newData = {
+          key: dataSource.length + 1,
+          username: value.username,
+          dept: value.dept,
+        };
+        setDataSource(
+         [...dataSource, newData]
+        );
+     
+      } else { 
+        const updateData = dataSource.map(
+          (arr) =>  arr.key === selectIndex ? {  ...dataSource[selectIndex - 1], ...value} : arr
+        );
+
+        setDataSource(
+          updateData
+        )
     };
+    onClose();
+  }
 
     const fileList = [
       {
@@ -82,11 +106,12 @@ const UserList = () => {
         title: '수정',
         dataIndex: 'edit',
         width: '10%',
-        render: () =>
-          <button onClick={() => showDrawer('수정')}>수정</button>
+        render: ( text ) =>
+          <button 
+            onClick={() => showDrawer('수정', text)}
+          >수정</button>
       },
     ]; 
-    console.log(dataSource);
       
     return (
       <>
@@ -112,13 +137,16 @@ const UserList = () => {
               </Button>
             </div>
           }
-        > 
-          <Form onFinish={onFinish}>
-            <Form.Item name="username" label="이름">
-              <Input placeholder="이름"/>
+        >
+          <Form onFinish={onFinish} form={form}>
+            <Form.Item name="username" label="이름" >
+              <Input placeholder="이름" />
             </Form.Item>
             <Form.Item name="number" label="번호">
-              <Input placeholder="번호"/>
+              <Input 
+              placeholder="번호" 
+              
+              />
             </Form.Item>
             <Form.Item name="dept" label="부서">
               <Select placeholder="부서 선택">
@@ -131,11 +159,11 @@ const UserList = () => {
               listType="picture"
               defaultFileList={[...fileList]}
             >
+              <Button>Upload</Button>
             </Upload>
             <Button 
-                onClose={onClose} 
-                htmlType="submit"
-                style={{marginTop: 15}}
+              htmlType="submit"
+              style={{marginTop: 15}}
             >
               확인
             </Button>
