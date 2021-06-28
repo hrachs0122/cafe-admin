@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {Table, Drawer, Button, Form, Input, Select, Upload } from 'antd';
 import './userList.css';
 
+
 const {Option} = Select;
 
 const UserList = () => {
@@ -24,8 +25,6 @@ const UserList = () => {
         },
       ]
     );
-
-    
     const [form] = Form.useForm();
     const showDrawer = (add, text) => {
       setVisible(true);
@@ -33,7 +32,9 @@ const UserList = () => {
       console.log(add === '추가' ? '추가' : '수정') 
       if (add === '수정') {
         setSelectIndex(text.key)  
-        form.setFieldsValue(text)
+        form.setFieldsValue(
+          text
+        )
       } else {
         form.resetFields()
       }
@@ -61,9 +62,9 @@ const UserList = () => {
         );
      
       } else { 
-        const updateData = dataSource.map(
-          (arr) =>  arr.key === selectIndex ? {  ...dataSource[selectIndex - 1], ...value} : arr
-        );
+    
+        const updateData = dataSource.map((arr) =>  arr.key === selectIndex ? {  ...dataSource[selectIndex - 1],
+          ...value} : arr);
 
         setDataSource(
           updateData
@@ -106,7 +107,7 @@ const UserList = () => {
         title: '수정',
         dataIndex: 'edit',
         width: '10%',
-        render: ( text ) =>
+        render: (record, text, index) =>
           <button 
             onClick={() => showDrawer('수정', text)}
           >수정</button>
